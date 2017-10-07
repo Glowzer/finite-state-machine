@@ -60,6 +60,7 @@ class FSM {
      * @param event
      * @returns {Array}
      */
+
     getStates(event) {
       if(event === undefined)
         return ['normal', 'busy', 'hungry', 'sleeping'];
