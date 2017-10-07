@@ -4,11 +4,14 @@ class FSM {
      * @param config
      */
     constructor(config) {
-      this.config = config;
-      this.initial = config.initial;
-      this.state = config.initial;
-      this.stateArray = [];
-      this.redoArray = [];
+      if (config !== undefined) {
+          this.config = config;
+          this.initial = config.initial;
+          this.state = config.initial;
+          this.stateArray = [];
+          this.redoArray = [];
+      }
+      else { throw new Error(); }
     }
 
     /**
@@ -24,9 +27,11 @@ class FSM {
      * @param state
      */
     changeState(state) {
-      this.state = state;
+      if(state != 'normal' && state != 'sleeping' && state != 'hungry' && state != 'busy')
+          throw new Error();
       this.stateArray.push(this.state);
       this.redoArray.pop();
+      this.state = state;
     }
 
     /**
@@ -34,17 +39,19 @@ class FSM {
      * @param event
      */
     trigger(event) {
+      if(event != 'get_tired' && event != 'get_hungry' && event != 'get_up' && event != 'eat' && event != 'study' || this.config.states[this.state].transitions[event] == undefined)
+        throw new Error();
       this.stateArray.push(this.state);
       this.redoArray.pop();
-      this.state = this.config.states[this.state].transition[event];
+      this.state = this.config.states[this.state].transitions[event];
     }
 
     /**
      * Resets FSM state to initial.
      */
     reset() {
-      this.state = this.initial;
       this.stateArray.push(this.state);
+      this.state = this.config.initial;
     }
 
     /**
@@ -55,11 +62,12 @@ class FSM {
      */
     getStates(event) {
       if(event === undefined)
-        return ['sleeping','normal','hungry','busy'];
+        return ['normal', 'busy', 'hungry', 'sleeping'];
       var array = [];
-      for(var k in this.config.states)
-          if(event in this.config.states[k].transition)
-            array.push(k);
+      for (var key in this.config.states){
+          if (event in this.config.stateArray[key].transitions)
+            array.push(key);
+      }
       return array;
     }
 
@@ -93,9 +101,8 @@ class FSM {
      * Clears transition history
      */
     clearHistory() {
-        this.state = this.initial;
-        this.stateArray.length = 0;
-        this.redoArray.length = 0;
+        this.state = this.config.initial;
+        this.stateArray.length = this.redoArray.length = 0;
     }
 }
 
