@@ -65,7 +65,7 @@ class FSM {
         return ['normal', 'busy', 'hungry', 'sleeping'];
       var array = [];
       for (var key in this.config.states){
-          if (event in this.config.stateArray[key].transitions)
+          if (event in this.config.states[key].transitions)
             array.push(key);
       }
       return array;
